@@ -13,7 +13,8 @@
         "git fetch": true,
         "git ls-remote": true,
         "git rev-parse": true,
-        "mkdir": true
+        "mkdir": true,
+        "go": true
     }
 }
 

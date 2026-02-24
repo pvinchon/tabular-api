@@ -1,0 +1,6 @@
+.git/
+*.log
+.env*
+server
+*.test
+*.out
