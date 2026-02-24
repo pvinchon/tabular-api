@@ -1,7 +1,21 @@
 services:
+  firebase-emulator:
+    build: ./firebase-emulator
+    ports:
+      - "4000:4000"
+      - "9099:9099"
+    environment:
+      FIREBASE_PROJECT_ID: "tabular-api"
+
   implementations:
     build: ./implementations
+    depends_on:
+      - firebase-emulator
     ports:
       - "8080:8080"
     environment:
       PORT: "8080"
+      FIREBASE_PROJECT_ID: "tabular-api"
+      FIREBASE_API_KEY: "fake-api-key"
+      FIREBASE_AUTH_DOMAIN: "project-tabular-api.firebaseapp.com"
+      FIREBASE_AUTH_EMULATOR_HOST: "localhost:9099"
