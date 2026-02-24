@@ -1,0 +1,18 @@
+services:
+  implementations:
+    build: ./implementations
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      firebase-emulator:
+        condition: service_healthy
+
+  firebase-emulator:
+    build: ./firebase-emulator
+    env_file:
+      - .env
+    ports:
+      - "4000:4000"
+      - "9099:9099"
