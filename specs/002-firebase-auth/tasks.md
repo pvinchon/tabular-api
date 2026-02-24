@@ -17,9 +17,9 @@
 
 **Purpose**: Add the new Go dependency and update Docker/Compose configuration
 
-- [ ] T001 Add `github.com/golang-jwt/jwt/v4` v4.5.2 dependency to implementations/go.mod and generate implementations/go.sum
-- [ ] T002 [P] Update implementations/Dockerfile to copy CA certificates from build stage (`COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/`)
-- [ ] T003 [P] Add `FIREBASE_PROJECT_ID`, `FIREBASE_API_KEY`, and `FIREBASE_AUTH_DOMAIN` environment variables to compose.yaml
+- [x] T001 Add `github.com/golang-jwt/jwt/v4` v4.5.2 dependency to implementations/go.mod and generate implementations/go.sum
+- [x] T002 [P] Update implementations/Dockerfile to copy CA certificates from build stage (`COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/`)
+- [x] T003 [P] Add `FIREBASE_PROJECT_ID`, `FIREBASE_API_KEY`, and `FIREBASE_AUTH_DOMAIN` environment variables to compose.yaml
 
 ---
 
@@ -29,10 +29,10 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Add fail-fast validation for `FIREBASE_PROJECT_ID`, `FIREBASE_API_KEY`, and `FIREBASE_AUTH_DOMAIN` environment variables at startup in implementations/main.go (log error + exit 1 if any missing, per FR-010 and Constitution III)
-- [ ] T005 Implement Google public key fetcher: fetch X.509 certificates from `https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com`, parse to RSA public keys, cache with expiry from `Cache-Control` `max-age` header, in implementations/main.go
-- [ ] T006 Implement Firebase ID token verification function: extract Bearer token from Authorization header, parse JWT with `golang-jwt/jwt/v4`, verify `alg`=RS256, `kid` matches cached key, `aud`=project ID, `iss`=`https://securetoken.google.com/<projectId>`, `exp` in future, `iat` in past, `sub` non-empty, return user claims (uid, email, name, picture) in implementations/main.go
-- [ ] T007 Implement JSON error envelope response helper matching contracts/http-api.md format (`{"error":{"code":"...","message":"..."}}`) in implementations/main.go
+- [x] T004 Add fail-fast validation for `FIREBASE_PROJECT_ID`, `FIREBASE_API_KEY`, and `FIREBASE_AUTH_DOMAIN` environment variables at startup in implementations/main.go (log error + exit 1 if any missing, per FR-010 and Constitution III)
+- [x] T005 Implement Google public key fetcher: fetch X.509 certificates from `https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com`, parse to RSA public keys, cache with expiry from `Cache-Control` `max-age` header, in implementations/main.go
+- [x] T006 Implement Firebase ID token verification function: extract Bearer token from Authorization header, parse JWT with `golang-jwt/jwt/v4`, verify `alg`=RS256, `kid` matches cached key, `aud`=project ID, `iss`=`https://securetoken.google.com/<projectId>`, `exp` in future, `iat` in past, `sub` non-empty, return user claims (uid, email, name, picture) in implementations/main.go
+- [x] T007 Implement JSON error envelope response helper matching contracts/http-api.md format (`{"error":{"code":"...","message":"..."}}`) in implementations/main.go
 
 **Checkpoint**: Server starts with all config validated; JWT verification and error envelope are ready for use by all user stories
 
@@ -46,10 +46,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T008 [US1] Update the GET / handler to inject Firebase config (`apiKey`, `authDomain`, `projectId`) from environment variables into the HTML page and add Firebase JS SDK v11.x CDN `<script type="module">` imports (firebase-app.js, firebase-auth.js) with pinned version in implementations/main.go
-- [ ] T009 [US1] Add client-side JavaScript to the root page: initialize Firebase app, use `onAuthStateChanged` to detect auth state, show "Sign in with Google" button when unauthenticated, show display name + "Sign out" button when authenticated, handle `signInWithPopup` with `GoogleAuthProvider`, handle cancelled/failed sign-in gracefully (FR-001, FR-002, FR-003, FR-008) in implementations/main.go
-- [ ] T010 [US1] Implement `GET /api/me` handler: extract Bearer token from Authorization header, call token verification function (T006), return JSON response with `uid`, `email`, `name`, `picture` fields on success (200), or error envelope with code `UNAUTHENTICATED` on failure (401), per contracts/http-api.md in implementations/main.go
-- [ ] T011 [US1] Ensure the existing `GET /` route with "Hello, World!" text remains visible and accessible regardless of authentication state (FR-011) in implementations/main.go
+- [x] T008 [US1] Update the GET / handler to inject Firebase config (`apiKey`, `authDomain`, `projectId`) from environment variables into the HTML page and add Firebase JS SDK v11.x CDN `<script type="module">` imports (firebase-app.js, firebase-auth.js) with pinned version in implementations/main.go
+- [x] T009 [US1] Add client-side JavaScript to the root page: initialize Firebase app, use `onAuthStateChanged` to detect auth state, show "Sign in with Google" button when unauthenticated, show display name + "Sign out" button when authenticated, handle `signInWithPopup` with `GoogleAuthProvider`, handle cancelled/failed sign-in gracefully (FR-001, FR-002, FR-003, FR-008) in implementations/main.go
+- [x] T010 [US1] Implement `GET /api/me` handler: extract Bearer token from Authorization header, call token verification function (T006), return JSON response with `uid`, `email`, `name`, `picture` fields on success (200), or error envelope with code `UNAUTHENTICATED` on failure (401), per contracts/http-api.md in implementations/main.go
+- [x] T011 [US1] Ensure the existing `GET /` route with "Hello, World!" text remains visible and accessible regardless of authentication state (FR-011) in implementations/main.go
 
 **Checkpoint**: Sign-in works end-to-end; `GET /api/me` returns profile JSON; Hello World text still visible; `./bin/test.sh` still passes
 
@@ -63,8 +63,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T012 [US2] Register `GET /profile` handler that serves an HTML page with Firebase JS SDK initialization (same config injection as T008), client-side JS that checks auth state on load: if authenticated, calls `GET /api/me` with Bearer token and renders profile (name, email, picture); if no picture field or empty, shows a default placeholder image (FR-004, FR-005); if unauthenticated, automatically initiates `signInWithPopup` (FR-009) in implementations/main.go
-- [ ] T013 [US2] Ensure the `/profile` route is registered before the catch-all 404 handler so it is served correctly in implementations/main.go
+- [x] T012 [US2] Register `GET /profile` handler that serves an HTML page with Firebase JS SDK initialization (same config injection as T008), client-side JS that checks auth state on load: if authenticated, calls `GET /api/me` with Bearer token and renders profile (name, email, picture); if no picture field or empty, shows a default placeholder image (FR-004, FR-005); if unauthenticated, automatically initiates `signInWithPopup` (FR-009) in implementations/main.go
+- [x] T013 [US2] Ensure the `/profile` route is registered before the catch-all 404 handler so it is served correctly in implementations/main.go
 
 **Checkpoint**: Profile page works independently; unauthenticated access triggers sign-in; placeholder image shown when no picture; US1 still works
 
@@ -78,8 +78,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T014 [US3] Add sign-out functionality to the root page: "Sign out" button calls Firebase `signOut(auth)`, `onAuthStateChanged` callback switches UI back to unauthenticated state showing "Sign in with Google" button (FR-006, FR-007) in implementations/main.go
-- [ ] T015 [US3] Add sign-out functionality to the profile page: "Sign out" button calls Firebase `signOut(auth)`, then automatically re-initiates Google sign-in flow (since profile page requires auth per FR-009) in implementations/main.go
+- [x] T014 [US3] Add sign-out functionality to the root page: "Sign out" button calls Firebase `signOut(auth)`, `onAuthStateChanged` callback switches UI back to unauthenticated state showing "Sign in with Google" button (FR-006, FR-007) in implementations/main.go
+- [x] T015 [US3] Add sign-out functionality to the profile page: "Sign out" button calls Firebase `signOut(auth)`, then automatically re-initiates Google sign-in flow (since profile page requires auth per FR-009) in implementations/main.go
 
 **Checkpoint**: Sign-out works on both pages; all 3 user stories work independently; `./bin/test.sh` still passes
 
@@ -89,9 +89,9 @@
 
 **Purpose**: Final verification and edge case handling
 
-- [ ] T016 Verify structured JSON logging covers all new endpoints (`/profile`, `/api/me`) with correct fields (request_id, method, path, status, latency_ms) and no token values logged (Constitution X) in implementations/main.go
-- [ ] T017 Verify Dockerfile builds successfully and produces working container image with CA certificates present
-- [ ] T018 Run quickstart.md validation (local build + Docker build + docker compose up)
+- [x] T016 Verify structured JSON logging covers all new endpoints (`/profile`, `/api/me`) with correct fields (request_id, method, path, status, latency_ms) and no token values logged (Constitution X) in implementations/main.go
+- [x] T017 Verify Dockerfile builds successfully and produces working container image with CA certificates present
+- [x] T018 Run quickstart.md validation (local build + Docker build + docker compose up)
 
 ---
 
