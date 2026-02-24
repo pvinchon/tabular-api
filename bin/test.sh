@@ -18,6 +18,7 @@ test_playwright() {
 
     cd tests/playwright
     npm install --silent
+    npx playwright install --with-deps
     npx playwright test
 }
 
